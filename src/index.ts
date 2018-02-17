@@ -51,36 +51,32 @@ async function runApp() {
 
     app.use(bodyParser.json());
 
+    _log.info('Mapping Routes to the server pipeline');
+    // Add service routes here
+    new HealthController().map(app);
+    new CacheController().map(app);
+
     // Add Middleware to logout errors
     app.use((err, req, res, next) => {
       _log.error(err.message);
       _log.error(err.stack);
 
       if (!Environment.isProduction()) {
-        res.status(200).send(
-          format('%j', {
-            error: {
-              message: err.message,
-              stack: err.stack
-            }
-          })
-        );
+        res.json({
+          error: {
+            message: err.message,
+            stack: err.stack
+          }
+        });
       } else {
         // do not send error details back to the caller on procustion
-        res.status(200).send(
-          format('%j', {
-            error: {
-              message: 'An unexpected error occured'
-            }
-          })
-        );
+        res.json({
+          error: {
+            message: 'An unexpected error occured'
+          }
+        });
       }
     });
-
-    _log.info('Mapping Routes to the server pipeline');
-    // Add service routes here
-    new HealthController().map(app);
-    new CacheController().map(app);
   } catch (err) {
     _log && _log.error('Error during Startup');
     process.emit('uncaughtException', err);

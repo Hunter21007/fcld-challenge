@@ -53,7 +53,22 @@ export default class CacheController {
       '/cache',
       wrap(async (req, res, next) => {
         let data = clean<CacheEntry>(CacheEntry, req.body);
-        data = await this._cache.save(req.body);
+        data = await this._cache.save(data);
+        return res.json({ data: data });
+      })
+    );
+    app.put(
+      '/cache/:key',
+      wrap(async (req, res, next) => {
+        const key = req.params.key;
+        let data: CacheEntry = await this._cache.get(key);
+        if (data == null) {
+          throw new Error(`Entry with key ${key} was not found in datastore`);
+        }
+
+        const inData = clean<CacheEntry>(CacheEntry, req.body);
+        data.data = inData.data;
+        data = await this._cache.save(data);
         return res.json({ data: data });
       })
     );

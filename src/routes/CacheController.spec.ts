@@ -134,12 +134,43 @@ describe('Cache Controller', () => {
       });
     });
 
-    describe.skip('PUT /cache/{key}', () => {
+    describe('PUT /cache/:key}', () => {
       it('Should update data with given key and return it back', done => {
-        done();
+        service
+          .save({
+            key: 'put1',
+            data: 'put-data'
+          })
+          .then(orig => {
+            req
+              .put('/cache/put1')
+              .send({
+                data: 'put-data1'
+              })
+              .expect(200, (err, res) => {
+                (<Object>res.body).should.haveOwnProperty('data');
+                const data = <CacheEntry>res.body.data;
+                data.key.should.equal('put1');
+                data.data.should.equal('put-data1');
+                data.ttl.should.be.greaterThan(now());
+                done();
+              });
+          });
       });
       it('Should return an error if key was not found in the cache', done => {
-        done();
+        req
+          .put('/cache/putnone123')
+          .send({
+            data: 'put-putnone123'
+          })
+          .expect(200, (err, res) => {
+            (<Object>res.body).should.haveOwnProperty('error');
+            const error = res.body.error;
+            error.message.should.equal(
+              'Entry with key putnone123 was not found in datastore'
+            );
+            done();
+          });
       });
     });
 
