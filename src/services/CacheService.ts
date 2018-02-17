@@ -124,5 +124,6 @@ export default class CacheService {
     if (res.result.ok != 1) {
       throw new Error('Could not wipe cache store');
     }
+    return res.deletedCount;
   }
 }

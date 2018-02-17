@@ -65,6 +65,7 @@ export default class CacheController {
         return res.json({ data: data });
       })
     );
+
     app.put(
       '/cache/:key',
       wrap(async (req, res, next) => {
@@ -77,6 +78,14 @@ export default class CacheController {
         const inData = clean<CacheEntry>(CacheEntry, req.body);
         data.data = inData.data;
         data = await this._cache.save(data);
+        return res.json({ data: data });
+      })
+    );
+
+    app.delete(
+      '/cache',
+      wrap(async (req, res, next) => {
+        const data: number = await this._cache.delAll();
         return res.json({ data: data });
       })
     );

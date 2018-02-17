@@ -197,12 +197,26 @@ describe('Cache Controller', () => {
       });
     });
 
-    describe.skip('DELETE /cache', () => {
+    describe('DELETE /cache', () => {
+      before(async () => {
+        await seed();
+      });
+
       it('Should remove all data from cache', done => {
-        done();
+        req.delete('/cache').expect(200, (err, res) => {
+          (<Object>res.body).should.haveOwnProperty('data');
+          const data = <number>res.body.data;
+          data.should.be.greaterThan(19);
+          done();
+        });
       });
       it('Should silently ignore cache is empty', done => {
-        done();
+        req.delete('/cache').expect(200, (err, res) => {
+          (<Object>res.body).should.haveOwnProperty('data');
+          const data = <number>res.body.data;
+          data.should.equal(0);
+          done();
+        });
       });
     });
   });
