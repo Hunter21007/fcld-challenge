@@ -21,16 +21,27 @@ describe('CacheService', () => {
     });
   });
 
-  describe('create', () => {
+  describe('save', () => {
     it('Should create cache data', async () => {
-      const res = await service.create({ key: 'key1', data: 'hello-world' });
+      const res = await service.save({ key: 'key1', data: 'hello-world' });
       res.should.not.be.null;
       res.ttl.should.be.greaterThan(now());
     });
 
     it('Should owerwrite cache data and update ttl', async () => {
-      const res = await service.create({ key: 'key1', data: 'hello-world' });
+      const res = await service.save({ key: 'key1', data: 'hello-world' });
       res.should.not.be.null;
+      res.ttl.should.be.greaterThan(now());
+    });
+  });
+
+  describe('get', () => {
+    it('Should return the object by key', async () => {
+      await service.save({ key: 'key1', data: 'hello-world' });
+      const res = await service.get('key1');
+
+      res.should.not.be.null;
+      res.key.should.equal('key1');
       res.ttl.should.be.greaterThan(now());
     });
   });

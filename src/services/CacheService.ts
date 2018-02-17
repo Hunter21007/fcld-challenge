@@ -30,14 +30,14 @@ export default class CacheService {
     return col;
   }
 
-  async create(entry: CacheEntry): Promise<CacheEntry> {
+  /**
+   * This method will store cache entry by either creatig new one or owerwrite
+   * existing one
+   * @param entry the entry to be saved
+   */
+  async save(entry: CacheEntry): Promise<CacheEntry> {
     const col = await this.ensureCollection();
-    const test = await col
-      .find({
-        key: entry.key
-      })
-      .limit(1)
-      .toArray();
+    const test = await this.findByKey(col, entry.key, 1);
 
     // Sanitize ttl for the entry
     entry.ttl = entry.ttl != null ? entry.ttl : getTtl();
@@ -67,5 +67,38 @@ export default class CacheService {
 
     this._log.debug(' created new cache entry: %j', ops[0]);
     return ops;
+  }
+
+  /**
+   * returns key entry identitfied by key or null if nothing present
+   * @param key
+   */
+  async get(key: string): Promise<CacheEntry> {
+    const col = await this.ensureCollection();
+    const test = await this.findByKey(col, key, 1);
+    if (test.length < 1) {
+      return null;
+    }
+    return test[0];
+  }
+
+  /**
+   * Wraps find operation for searching data
+   * @param col the collection with cache entries
+   * @param key
+   * @param limit if given will use to limit cursor results
+   */
+  async findByKey(
+    col: mongo.Collection<CacheEntry>,
+    key: string,
+    limit?: number
+  ) {
+    const cursor = await col.find({
+      key: key
+    });
+    if (limit) {
+      return await cursor.limit(1).toArray();
+    }
+    return await cursor.toArray();
   }
 }
