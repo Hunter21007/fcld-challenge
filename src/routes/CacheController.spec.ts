@@ -67,8 +67,22 @@ describe('Cache Controller', () => {
         });
       });
 
-      it.skip('Should return random key if ttl expired', done => {
-        done();
+      it('Should return random key if ttl expired', done => {
+        service
+          .save({
+            key: 'exp1',
+            data: 'expired one',
+            ttl: now() - 100 // this will be exipred one
+          })
+          .then(orig => {
+            req.get('/cache/exp1').expect(200, (err, res) => {
+              (<Object>res.body).should.haveOwnProperty('data');
+              const data = <CacheEntry>res.body.data;
+              data.key.should.equal('exp1');
+              data.data.length.should.equal(128);
+              done();
+            });
+          });
       });
 
       it('Should return existing key on cache hit', done => {

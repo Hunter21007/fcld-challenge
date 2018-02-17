@@ -9,6 +9,8 @@ export function getLogger() {
   const logConfig = config.get(LOGGING) as ILoggingConfig;
 
   return new winston.Logger({
-    transports: [new winston.transports.Console({ level: logConfig.level })]
+    transports: [
+      new winston.transports.Console({ colorize: true, level: logConfig.level })
+    ]
   });
 }

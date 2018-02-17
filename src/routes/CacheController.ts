@@ -6,6 +6,7 @@ import CacheService from '../services/CacheService';
 import { CacheEntry } from '../data';
 import { random } from '../utils/random';
 import { clean } from '../utils/transform';
+import { now } from '../utils/date';
 
 export default class CacheController {
   _cache: CacheService;
@@ -17,6 +18,7 @@ export default class CacheController {
 
   map(app: express.Express) {
     this._log.info('Mapping cache endpoint');
+
     app.get(
       '/cache',
       wrap(async (req, res, next) => {
@@ -25,6 +27,7 @@ export default class CacheController {
         return res.json({ data: data });
       })
     );
+
     app.get(
       '/cache/keys',
       wrap(async (req, res, next) => {
@@ -32,23 +35,28 @@ export default class CacheController {
         return res.json({ data: data.map(d => d.key) });
       })
     );
+
     app.get(
       '/cache/:key',
       wrap(async (req, res, next) => {
         const key = req.params.key;
         let data: CacheEntry = await this._cache.get(key);
-        if (data == null) {
+        if (data == null || data.ttl < now()) {
+          // I have no idea how to unit test this line
+          this._log.warn('Cache miss for key: %s', key);
           data = await this._cache.save({
             key: key,
             data: random()
           });
         } else {
+          this._log.info('Cache hit for key: %s', key);
           data.ttl = null;
           data = await this._cache.save(data);
         }
         return res.json({ data: data });
       })
     );
+
     app.post(
       '/cache',
       wrap(async (req, res, next) => {
