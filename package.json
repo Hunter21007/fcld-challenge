@@ -1,0 +1,99 @@
+{
+  "name": "fcld-challenge",
+  "version": "1.0.0",
+  "description": "Fashion Cloud Code Challenge",
+  "author": "Jurij Zahn",
+  "license": "UNLICENSED",
+  "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hunter21007/fcld-challenge.git"
+  },
+  "keywords": ["node", "api", "mongodb"],
+  "scripts": {
+    "start":
+      "cross-env NODE_ENV=development NODE_CONFIG_DIR=src/config node -r ts-node/register src/index.ts",
+    "build":
+      "node_modules/typescript/bin/tsc && node_modules/gulp/bin/gulp.js post-build",
+    "lint": "node_modules/tslint/bin/tslint -p .",
+    "clean": "rm -Rf build",
+    "test":
+      "npm run-script test:build && cross-env NODE_ENV=test npm run-script test:run",
+    "test:build": "node_modules/typescript/bin/tsc -p tsconfig.test.json",
+    "test:run":
+      "cross-env NODE_CONFIG_DIR=src/config mocha --opts mocha.opts -R spec \"./src/**/*.spec.ts\"",
+    "test:local":
+      "npm run-script services:run && cross-env NODE_ENV=development npm run-script test:run",
+    "cover": "nyc npm test",
+    "cover:report": "nyc report",
+    "cover:check": "nyc check-coverage",
+    "cover:local": "nyc npm run-script test:local",
+    "cover:watch": "npm-watch cover:local",
+    "test:run:files":
+      "cross-env NODE_CONFIG_DIR=src/config mocha --opts mocha.opts -R spec ",
+    "test:local:files":
+      "npm run-script services:run && cross-env NODE_ENV=development npm run-script test:run:files",
+    "cover:local:files": "nyc npm run-script test:local:files",
+    "services:run": "scripts/run_services.sh",
+    "services:stop": "scripts/stop_services.sh"
+  },
+  "nyc": {
+    "include": [
+      "src/*.ts",
+      "src/**/*.ts",
+      "!src/**/*.spec.ts",
+      "!src/*.spec.ts"
+    ],
+    "extension": [".ts"],
+    "reporter": ["text", "text-summary", "json", "html"],
+    "all": true
+  },
+  "watch": {
+    "cover:local": {
+      "patterns": ["src"],
+      "extensions": "ts,json,gql"
+    }
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "config": "^1.28.1",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-winston": "^2.4.0",
+    "helmet": "^3.9.0",
+    "lodash": "^4.17.4",
+    "reflect-metadata": "^0.1.10",
+    "request": "^2.83.0",
+    "uuid": "^3.1.0",
+    "winston": "^2.4.0",
+    "yargs": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.6",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/config": "0.0.33",
+    "@types/cors": "^2.8.3",
+    "@types/express": "^4.0.39",
+    "@types/helmet": "0.0.36",
+    "@types/lodash": "^4.14.86",
+    "@types/mocha": "^2.2.44",
+    "@types/node": "^8.0.53",
+    "@types/request": "^2.0.8",
+    "@types/supertest": "^2.0.4",
+    "@types/winston": "^2.3.7",
+    "@types/zen-observable": "^0.5.3",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "cross-env": "^5.1.1",
+    "gulp": "^3.9.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.5.3",
+    "nodemon": "^1.12.1",
+    "npm-watch": "^0.3.0",
+    "nyc": "^11.4.0",
+    "supertest": "^3.0.0",
+    "ts-node": "^4.0.2",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
+  }
+}
