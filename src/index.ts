@@ -88,7 +88,7 @@ async function runApp() {
   _log.info('Starting Service');
   _log.info('Environment: %s', Environment.getName());
   // This will allow us to override the port by environment config
-  const startUpConfig = config.get('serviceConfig') as IServiceConfig;
+  const startUpConfig = config.get(SERVICE) as IServiceConfig;
   // We do not start listener if the server is started from unit test
   if (!module.parent) {
     const server = app.listen(startUpConfig.servicePort);
