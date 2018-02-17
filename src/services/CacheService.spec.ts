@@ -25,22 +25,13 @@ describe('CacheService', () => {
     it('Should create cache data', async () => {
       const res = await service.create({ key: 'key1', data: 'hello-world' });
       res.should.not.be.null;
+      res.ttl.should.be.greaterThan(now());
     });
 
-    it('Should throw error if ttl not expired', async () => {
-      const act = async () =>
-        await service.create({ key: 'key1', data: 'hello-world' });
-      act.should.throw;
-    });
-
-    it('Should owerwrite cache data if ttl expired', async () => {
-      await service.create({
-        key: 'key2',
-        data: 'hello-world',
-        ttl: now() - 1000
-      });
-      const res = await service.create({ key: 'key2', data: 'hello-world' });
+    it('Should owerwrite cache data and update ttl', async () => {
+      const res = await service.create({ key: 'key1', data: 'hello-world' });
       res.should.not.be.null;
+      res.ttl.should.be.greaterThan(now());
     });
   });
 });

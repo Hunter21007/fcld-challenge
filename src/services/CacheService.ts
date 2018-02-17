@@ -7,6 +7,7 @@ import { now, getTtl } from '../utils/date';
 import { getLogger } from '../utils/logger';
 import * as winston from 'winston';
 import { debug } from 'util';
+import { InsertOneWriteOpResult } from 'mongodb';
 
 export default class CacheService {
   _log: winston.LoggerInstance;
@@ -37,27 +38,34 @@ export default class CacheService {
       })
       .limit(1)
       .toArray();
-    if (test.length > 0 && test[0].key == entry.key) {
-      if (test[0].ttl > now()) {
-        throw new Error('Can not create entry, key already exist');
-      } else {
-        const rmRes = await col.deleteOne({ key: entry.key });
-      }
-    }
 
     // Sanitize ttl for the entry
     entry.ttl = entry.ttl != null ? entry.ttl : getTtl();
-    const res = await col.insert(entry);
 
-    if (res.insertedCount != 1) {
-      throw new Error('Could not create cache entry');
+    let ops: CacheEntry;
+    if (test.length > 0 && test[0].key == entry.key) {
+      const res = await col.updateOne(
+        {
+          key: entry.key
+        },
+        { $set: entry }
+      );
+      if (res.result.ok != 1) {
+        throw new Error('Could not create cache entry');
+      }
+      ops = entry;
+    } else {
+      const res = await col.insert(entry);
+      if (res.result.ok != 1) {
+        throw new Error('Could not create cache entry');
+      }
+      if (res.ops.length != 1) {
+        throw new Error('Data count mismatch during create entry');
+      }
+      ops = (res.ops as CacheEntry[])[0];
     }
 
-    const ops = res.ops as CacheEntry[];
-    if (ops.length != 1) {
-      throw new Error('Data count mismatch during create entry');
-    }
     this._log.debug(' created new cache entry: %j', ops[0]);
-    return ops[0];
+    return ops;
   }
 }
