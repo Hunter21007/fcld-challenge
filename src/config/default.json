@@ -2,9 +2,12 @@
   "serviceConfig": {
     "servicePort": 3000
   },
+  "logging": {
+    "level": "info"
+  },
   "appInfo": {
     "name": "fcld-challenge",
     "version": "1.0.0",
-    "date": "2018-02-17T09:51:48.541Z"
+    "date": "2018-02-17T10:21:00.547Z"
   }
 }

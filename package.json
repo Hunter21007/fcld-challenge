@@ -9,30 +9,27 @@
     "type": "git",
     "url": "https://github.com/Hunter21007/fcld-challenge.git"
   },
-  "keywords": ["node", "api", "mongodb"],
+  "keywords": [
+    "node",
+    "api",
+    "mongodb"
+  ],
   "scripts": {
-    "start":
-      "cross-env NODE_ENV=development NODE_CONFIG_DIR=src/config node -r ts-node/register src/index.ts",
-    "build":
-      "node_modules/typescript/bin/tsc && node_modules/gulp/bin/gulp.js post-build",
+    "start": "cross-env NODE_ENV=development NODE_CONFIG_DIR=src/config node -r ts-node/register src/index.ts",
+    "build": "node_modules/typescript/bin/tsc && node_modules/gulp/bin/gulp.js post-build",
     "lint": "node_modules/tslint/bin/tslint -p .",
     "clean": "rm -Rf build",
-    "test":
-      "npm run-script test:build && cross-env NODE_ENV=test npm run-script test:run",
+    "test": "npm run-script test:build && cross-env NODE_ENV=test npm run-script test:run",
     "test:build": "node_modules/typescript/bin/tsc -p tsconfig.test.json",
-    "test:run":
-      "cross-env NODE_CONFIG_DIR=src/config mocha --opts mocha.opts -R spec \"./src/**/*.spec.ts\"",
-    "test:local":
-      "npm run-script services:run && cross-env NODE_ENV=development npm run-script test:run",
+    "test:run": "cross-env NODE_CONFIG_DIR=src/config mocha --opts mocha.opts -R spec \"./src/**/*.spec.ts\"",
+    "test:local": "npm run-script services:run && cross-env NODE_ENV=development npm run-script test:run",
     "cover": "nyc npm test",
     "cover:report": "nyc report",
     "cover:check": "nyc check-coverage",
     "cover:local": "nyc npm run-script test:local",
     "cover:watch": "npm-watch cover:local",
-    "test:run:files":
-      "cross-env NODE_CONFIG_DIR=src/config mocha --opts mocha.opts -R spec ",
-    "test:local:files":
-      "npm run-script services:run && cross-env NODE_ENV=development npm run-script test:run:files",
+    "test:run:files": "cross-env NODE_CONFIG_DIR=src/config mocha --opts mocha.opts -R spec ",
+    "test:local:files": "npm run-script services:run && cross-env NODE_ENV=development npm run-script test:run:files",
     "cover:local:files": "nyc npm run-script test:local:files",
     "services:run": "scripts/run_services.sh",
     "services:stop": "scripts/stop_services.sh"
@@ -44,13 +41,22 @@
       "!src/**/*.spec.ts",
       "!src/*.spec.ts"
     ],
-    "extension": [".ts"],
-    "reporter": ["text", "text-summary", "json", "html"],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "text",
+      "text-summary",
+      "json",
+      "html"
+    ],
     "all": true
   },
   "watch": {
     "cover:local": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "ts,json,gql"
     }
   },

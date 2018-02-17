@@ -11,6 +11,8 @@ import * as config from 'config';
 // IoC and Configuration must be imported before other modules
 import Environment from './environment/Environment';
 import { IServiceConfig } from './config/index';
+import { getLogger } from './utils/logger';
+import { HealthController } from './routes';
 
 /**
  * We declare an async function here to make our entrypoint capable to use await
@@ -19,9 +21,7 @@ import { IServiceConfig } from './config/index';
 async function runApp() {
   let app: express.Express;
 
-  const _log = new winston.Logger({
-    transports: [new winston.transports.Console({ level: 'info' })]
-  });
+  const _log = getLogger();
 
   try {
     _log.info('Creating Server');
@@ -78,7 +78,8 @@ async function runApp() {
 
     _log.info('Mapping Routes to the server pipeline');
     // Add service routes here
-    //
+
+    new HealthController().map(app);
   } catch (err) {
     _log && _log.error('Error during Startup');
     process.emit('uncaughtException', err);
