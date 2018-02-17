@@ -1,0 +1,5 @@
+--recursive
+--require ts-node/register
+--watch-extensions ts
+--timeout 15000
+--ui bdd

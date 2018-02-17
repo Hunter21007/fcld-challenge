@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "build",
+    "moduleResolution": "node",
+    "lib": ["es6", "esnext", "dom"],
+    "types": ["reflect-metadata", "node", "mocha", "chai"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "removeComments": false,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}
