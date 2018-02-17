@@ -127,6 +127,10 @@ export default class CacheService {
     return res.deletedCount;
   }
 
+  /**
+   * Removes the entry identitfied by key from datastore
+   * @param key
+   */
   async del(key: string) {
     const col = await this.ensureCollection();
     const res = await col.deleteOne({
