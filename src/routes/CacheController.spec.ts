@@ -188,12 +188,29 @@ describe('Cache Controller', () => {
       });
     });
 
-    describe.skip('DELETE /cache/{key}', () => {
+    describe('DELETE /cache/:key', () => {
       it('Should remove the data with given key from cache', done => {
-        done();
+        service
+          .save({
+            key: 'del1',
+            data: 'del-data'
+          })
+          .then(orig => {
+            req.delete('/cache/del1').expect(200, (err, res) => {
+              (<Object>res.body).should.haveOwnProperty('data');
+              const data = <number>res.body.data;
+              data.should.equal(1);
+              done();
+            });
+          });
       });
       it('Should silently ignore if the key is not present in the cache', done => {
-        done();
+        req.delete('/cache/del4').expect(200, (err, res) => {
+          (<Object>res.body).should.haveOwnProperty('data');
+          const data = <number>res.body.data;
+          data.should.equal(0);
+          done();
+        });
       });
     });
 
@@ -210,6 +227,7 @@ describe('Cache Controller', () => {
           done();
         });
       });
+
       it('Should silently ignore cache is empty', done => {
         req.delete('/cache').expect(200, (err, res) => {
           (<Object>res.body).should.haveOwnProperty('data');

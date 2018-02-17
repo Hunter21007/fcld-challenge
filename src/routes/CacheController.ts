@@ -89,5 +89,16 @@ export default class CacheController {
         return res.json({ data: data });
       })
     );
+
+    app.delete(
+      '/cache/:key',
+
+      wrap(async (req, res, next) => {
+        const key = req.params.key;
+
+        const data: number = await this._cache.del(key);
+        return res.json({ data: data });
+      })
+    );
   }
 }

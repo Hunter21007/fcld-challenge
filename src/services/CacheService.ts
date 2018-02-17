@@ -126,4 +126,12 @@ export default class CacheService {
     }
     return res.deletedCount;
   }
+
+  async del(key: string) {
+    const col = await this.ensureCollection();
+    const res = await col.deleteOne({
+      key: key
+    });
+    return res.deletedCount;
+  }
 }
