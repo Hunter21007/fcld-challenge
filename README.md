@@ -2,6 +2,14 @@
 
 Code Challenge for Fashion Cloud
 
+## Run Tests
+
+in order to run tests, docker runtime must be installed
+and user must have permissions to run docker commands
+
+alternatively mongodb must must run somewhere and connection must be configured
+in this case comment out startup comands in `scrips/run_services`
+
 ## Development
 
 use npm scripts to work with code:
