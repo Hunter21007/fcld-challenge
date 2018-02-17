@@ -28,5 +28,6 @@ export function getTtl() {
   // now returns timestamp in milliseconds
   // so we multiply ttl by 1000 to make seconds millisecodns
   // and then add them to the now => the ttl of the enty in the future
-  return now() + cacheConfig.ttl * 1000;
+  const res = now() + cacheConfig.ttl * 1000;
+  return res;
 }

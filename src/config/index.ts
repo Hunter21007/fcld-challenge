@@ -13,3 +13,21 @@ export interface IMongoConfig {
   url: string;
   dbName: string;
 }
+
+export const CACHE = 'cache';
+export interface ICacheConfig {
+  /**
+   * the ttl of a cache entry in seconds
+   *
+   * @type {number}
+   * @memberof ICacheConfig
+   */
+  ttl: number;
+  /**
+   * maximum amount of cache entries
+   *
+   * @type {number}
+   * @memberof ICacheConfig
+   */
+  max: number;
+}

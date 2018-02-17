@@ -9,5 +9,13 @@
     "name": "fcld-challenge",
     "version": "1.0.0",
     "date": "2018-02-17T10:21:00.547Z"
+  },
+  "mongoDb": {
+    "url": "mongodb://localhost:27017",
+    "dbName": "cachedata"
+  },
+  "cache": {
+    "ttl": 10,
+    "max": 20
   }
 }
