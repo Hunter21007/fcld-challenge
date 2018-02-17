@@ -10,9 +10,10 @@ import * as config from 'config';
 
 // IoC and Configuration must be imported before other modules
 import Environment from './environment/Environment';
-import { IServiceConfig } from './config/index';
+import { IServiceConfig, SERVICE } from './config/index';
 import { getLogger } from './utils/logger';
 import { HealthController } from './routes';
+import CacheController from './routes/CacheController';
 
 /**
  * We declare an async function here to make our entrypoint capable to use await
@@ -78,8 +79,8 @@ async function runApp() {
 
     _log.info('Mapping Routes to the server pipeline');
     // Add service routes here
-
     new HealthController().map(app);
+    new CacheController().map(app);
   } catch (err) {
     _log && _log.error('Error during Startup');
     process.emit('uncaughtException', err);

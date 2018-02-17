@@ -101,4 +101,28 @@ export default class CacheService {
     }
     return await cursor.toArray();
   }
+
+  /**
+   * returns all entries from cache, limited by limit if given
+   * @param limit
+   */
+  async getAll(limit?: number) {
+    const col = await this.ensureCollection();
+    const cursor = await col.find({});
+    if (limit) {
+      return await cursor.limit(1).toArray();
+    }
+    return await cursor.toArray();
+  }
+
+  /**
+   * Wipes all cahed entries from cache store
+   */
+  async delAll() {
+    const col = await this.ensureCollection();
+    const res = await col.deleteMany({});
+    if (res.result.ok != 1) {
+      throw new Error('Could not wipe cache store');
+    }
+  }
 }
