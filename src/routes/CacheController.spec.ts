@@ -5,11 +5,12 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { app as appPromise } from '../index';
 import Environment from '../environment/Environment';
 import CacheService from '../services/CacheService';
-import { SERVICE } from '../config/index';
+import { SERVICE, CACHE, ICacheConfig } from '../config/index';
 import { random } from '../utils/random';
 import { CacheEntry } from '../data';
 import { seed } from '../services/CacheService.spec';
 import { now } from '../utils/date';
+import * as config from 'config';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -142,9 +143,49 @@ describe('Cache Controller', () => {
             done();
           });
       });
+    });
 
-      it.skip('Should replace the oldest object if cache limit exeeded', done => {
-        done();
+    describe('Cache Limiter', () => {
+      const cacheConfig = config.get(CACHE) as ICacheConfig;
+      before(async () => {
+        await service.delAll();
+        await seed(cacheConfig.max + 1);
+        await service.save({
+          key: `key1`,
+          data: 'latest',
+          ttl: now() - 1000
+        });
+      });
+
+      it('Should replace the oldest object if cache limit exeeded', done => {
+        req
+          .post('/cache')
+          .send({
+            key: 'new1',
+            data: 'new-data1'
+          })
+          .expect(200, (err, res) => {
+            (<Object>res.body).should.haveOwnProperty('data');
+            const data = <CacheEntry>res.body.data;
+            data.key.should.equal('new1');
+            data.data.should.equal('new-data1');
+            data.ttl.should.be.greaterThan(now());
+
+            service
+              .get('key1')
+              .then(test => {
+                expect(test).to.be.null;
+              })
+              .then(() =>
+                service.getAll().then(list => {
+                  // there is a tolerancy to the cache limit
+                  // there could exist more the max entries
+                  // depending on the count of concurrent requests
+                  list.length.should.equal(21);
+                  done();
+                })
+              );
+          });
       });
     });
 

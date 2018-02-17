@@ -1,6 +1,6 @@
 import * as mongo from 'mongodb';
 import * as config from 'config';
-import { MONGODB, IMongoConfig } from '../config';
+import { MONGODB, IMongoConfig, ICacheConfig, CACHE } from '../config';
 import { getDb } from '../utils/mongo';
 import { CacheEntry } from '../data';
 import { now, getTtl } from '../utils/date';
@@ -10,12 +10,14 @@ import { debug } from 'util';
 import { InsertOneWriteOpResult } from 'mongodb';
 
 export default class CacheService {
+  _config: ICacheConfig;
   _log: winston.LoggerInstance;
   _dbName: string;
 
   constructor() {
     this._dbName = (config.get(MONGODB) as IMongoConfig).dbName;
     this._log = getLogger();
+    this._config = config.get(CACHE) as ICacheConfig;
   }
 
   /**
@@ -42,7 +44,7 @@ export default class CacheService {
     // Sanitize ttl for the entry
     entry.ttl = entry.ttl != null ? entry.ttl : getTtl();
 
-    let ops: CacheEntry;
+    let saved: CacheEntry;
     if (test.length > 0 && test[0].key == entry.key) {
       const res = await col.updateOne(
         {
@@ -53,20 +55,17 @@ export default class CacheService {
       if (res.result.ok != 1) {
         throw new Error('Could not create cache entry');
       }
-      ops = entry;
+      saved = entry;
     } else {
       const res = await col.insert(entry);
       if (res.result.ok != 1) {
         throw new Error('Could not create cache entry');
       }
-      if (res.ops.length != 1) {
-        throw new Error('Data count mismatch during create entry');
-      }
-      ops = (res.ops as CacheEntry[])[0];
+      saved = (res.ops as CacheEntry[])[0];
     }
 
-    this._log.debug(' created new cache entry: %j', ops[0]);
-    return ops;
+    this._log.debug(' created new cache entry: %j', saved[0]);
+    return saved;
   }
 
   /**
@@ -137,5 +136,46 @@ export default class CacheService {
       key: key
     });
     return res.deletedCount;
+  }
+
+  /**
+   * Checks for cache.max and removes old objects if needed
+   */
+  async applyLimiter() {
+    const count = await this.count();
+    const diff = count - this._config.max;
+    if (diff > 0) {
+      await this.delOld(diff);
+      return diff;
+    }
+    return 0;
+  }
+
+  /**
+   * Returns count of cache entries
+   */
+  async count() {
+    const col = await this.ensureCollection();
+    const res = await col.count({});
+    return res;
+  }
+
+  /**
+   * Looks for oldest objects by ttl and deletes {count} of them
+   * @param count specifies how many entries should be deleted
+   */
+  async delOld(count: number) {
+    const col = await this.ensureCollection();
+    const old = await col
+      .find()
+      .sort({ ttl: +1 })
+      .limit(count)
+      .toArray();
+
+    await Promise.all(
+      old.map(async o => {
+        await col.deleteOne({ key: o.key });
+      })
+    );
   }
 }

@@ -11,9 +11,9 @@ import { random } from '../utils/random';
 chai.use(chaiAsPromised);
 chai.should();
 
-export async function seed() {
+export async function seed(max: number = 20) {
   const service = new CacheService();
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < max; i++) {
     await service.save({
       key: `key${i}`,
       data: random()
