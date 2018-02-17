@@ -9,6 +9,7 @@ import { SERVICE } from '../config/index';
 import { random } from '../utils/random';
 import { CacheEntry } from '../data';
 import { seed } from '../services/CacheService.spec';
+import { now } from '../utils/date';
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -70,16 +71,65 @@ describe('Cache Controller', () => {
         done();
       });
 
-      it.skip('Should return existing key on cache hit', done => {
-        done();
+      it('Should return existing key on cache hit', done => {
+        service
+          .save({
+            key: 'ext1',
+            data: 'safe-hit'
+          })
+          .then(orig => {
+            req.get('/cache/ext1').expect(200, (err, res) => {
+              (<Object>res.body).should.haveOwnProperty('data');
+              const data = <CacheEntry>res.body.data;
+              data.key.should.equal('ext1');
+              data.data.should.equal('safe-hit');
+              done();
+            });
+          });
+      });
+
+      it('Should return update ttl on cache hit', done => {
+        service
+          .save({
+            key: 'ext1',
+            data: 'safe-hit'
+          })
+          .then(orig => {
+            req.get('/cache/ext1').expect(200, (err, res) => {
+              (<Object>res.body).should.haveOwnProperty('data');
+              const data = <CacheEntry>res.body.data;
+              data.key.should.equal('ext1');
+              data.data.should.equal('safe-hit');
+              data.ttl.should.be.greaterThan(orig.ttl);
+              done();
+            });
+          });
       });
     });
 
-    describe.skip('POST /cache/{key}', () => {
-      it('Should create new data with given key and return it back', done => {
-        done();
+    describe('POST /cache', () => {
+      before(async () => {
+        await service.delAll();
       });
-      it('Should replace the oldest object if cache limit exeeded', done => {
+
+      it('Should create new data with given key and return it back', done => {
+        req
+          .post('/cache')
+          .send({
+            key: 'crt1',
+            data: 'crt-data1'
+          })
+          .expect(200, (err, res) => {
+            (<Object>res.body).should.haveOwnProperty('data');
+            const data = <CacheEntry>res.body.data;
+            data.key.should.equal('crt1');
+            data.data.should.equal('crt-data1');
+            data.ttl.should.be.greaterThan(now());
+            done();
+          });
+      });
+
+      it.skip('Should replace the oldest object if cache limit exeeded', done => {
         done();
       });
     });

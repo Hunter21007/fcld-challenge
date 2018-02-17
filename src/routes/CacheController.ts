@@ -5,6 +5,7 @@ import { wrap } from '../utils/express';
 import CacheService from '../services/CacheService';
 import { CacheEntry } from '../data';
 import { random } from '../utils/random';
+import { clean } from '../utils/transform';
 
 export default class CacheController {
   _cache: CacheService;
@@ -41,7 +42,18 @@ export default class CacheController {
             key: key,
             data: random()
           });
+        } else {
+          data.ttl = null;
+          data = await this._cache.save(data);
         }
+        return res.json({ data: data });
+      })
+    );
+    app.post(
+      '/cache',
+      wrap(async (req, res, next) => {
+        let data = clean<CacheEntry>(CacheEntry, req.body);
+        data = await this._cache.save(req.body);
         return res.json({ data: data });
       })
     );
