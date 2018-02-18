@@ -23,6 +23,7 @@ export default class HealthController {
      * @swagger
      * definitions:
      *   AppInfo:
+     *      description: contains app info data
      *      type: object
      *      properties:
      *        name:
@@ -53,9 +54,7 @@ export default class HealthController {
      *       200:
      *         description: HealthInfo
      *         schema:
-     *           type: object
-     *           items:
-     *             $ref: '#/definitions/HealthInfo'
+     *           $ref: '#/definitions/HealthInfo'
      *
      */
     app.get(

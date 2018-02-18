@@ -1,7 +1,9 @@
 import swaggerJSDoc = require('swagger-jsdoc');
 import * as express from 'express';
 import * as swaggerUI from 'swagger-ui-express';
+import { getSrcRoot } from '../utils/path';
 
+/** This must be directory relative to src */
 const DIR = 'routes';
 
 /**
@@ -9,11 +11,7 @@ const DIR = 'routes';
  */
 export default class SwaggerDocs {
   swaggerDoc() {
-    const cwd = process.cwd();
-    const srcRoot = __dirname
-      .replace(cwd, '')
-      .replace(DIR, '')
-      .replace(/\//, '');
+    const srcRoot = getSrcRoot(__dirname, DIR);
 
     // options for the swagger docs
     const options = {
@@ -27,7 +25,12 @@ export default class SwaggerDocs {
         basePath: '/'
       },
       // path to the API docs
-      apis: [`./${srcRoot}${DIR}/*.ts`, `./${srcRoot}../model/*.ts`]
+      apis: [
+        `./${srcRoot}${DIR}/*.ts`,
+        `./${srcRoot}model/*.ts`,
+        `./${srcRoot}${DIR}/*.js`,
+        `./${srcRoot}model/*.js`
+      ]
     };
 
     // initialize swagger-jsdoc

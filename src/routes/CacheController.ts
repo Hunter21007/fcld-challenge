@@ -19,6 +19,48 @@ export default class CacheController {
   map(app: express.Express) {
     this._log.info('Mapping cache endpoint');
 
+    /**
+     * TODO: This case def must in a common location
+     * @swagger
+     * definitions:
+     *   ApiBase:
+     *      type: object
+     *      properties:
+     *        error:
+     *          description: In case the api request errors this will contain the error data
+     *          type: object
+     *          properties:
+     *            message:
+     *              description: Contains error message
+     *              type: string
+     *            stack:
+     *              description: Contains Stacktrace of the error
+     *              type: string
+     *   CacheAll:
+     *      allOf:
+     *      - $ref: '#/definitions/ApiBase'
+     *      description: Contains Array of Cache Entry
+     *      type: object
+     *      properties:
+     *        data:
+     *          description: if api call was succeeded this filed will contain list of cache entries
+     *          type: array
+     *          items:
+     *             $ref: '#/definitions/CacheEntry'
+     */
+    /**
+     * @swagger
+     * /cache:
+     *   get:
+     *     description: Returns all cache objects from store
+     *     produces:
+     *      - application/json
+     *     responses:
+     *       200:
+     *         description: returns an array of CacheEntry
+     *         schema:
+     *           $ref: '#/definitions/CacheAll'
+     */
     app.get(
       '/cache',
       wrap(async (req, res, next) => {
