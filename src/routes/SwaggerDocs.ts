@@ -45,10 +45,12 @@ export default class SwaggerDocs {
       res.send(getDocs(/* pass uri so the host can be resolved properly */));
     });
 
-    const options = {
-      explorer: true,
-      swaggerUrl: 'http://localhost:3000/swagger.json'
-    };
-    app.use('/swagger', swaggerUI.serve, swaggerUI.setup(null, options));
+    app.use('/swagger', swaggerUI.serve, (req, res) => {
+      const options = {
+        explorer: true,
+        swaggerUrl: `${req.protocol}://${req.get('host')}/swagger.json`
+      };
+      swaggerUI.setup(null, options)(req, res);
+    });
   }
 }
