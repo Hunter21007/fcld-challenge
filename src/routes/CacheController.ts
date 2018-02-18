@@ -3,7 +3,7 @@ import * as winston from 'winston';
 import * as express from 'express';
 import { wrap } from '../utils/express';
 import CacheService from '../services/CacheService';
-import { CacheEntry } from '../data';
+import { CacheEntry } from '../model';
 import { random } from '../utils/random';
 import { clean } from '../utils/transform';
 import { now } from '../utils/date';

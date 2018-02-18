@@ -7,7 +7,7 @@ import Environment from '../environment/Environment';
 import CacheService from '../services/CacheService';
 import { SERVICE } from '../config/index';
 import { random } from '../utils/random';
-import { CacheEntry } from '../data';
+import { CacheEntry } from '../model';
 import { seed } from '../services/CacheService.spec';
 import { now } from '../utils/date';
 

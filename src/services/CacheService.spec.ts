@@ -4,7 +4,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { app as appPromise } from '../index';
 import Environment from '../environment/Environment';
 import CacheService from './CacheService';
-import { CacheEntry } from '../data';
+import { CacheEntry } from '../model';
 import { now } from '../utils/date';
 import { random } from '../utils/random';
 

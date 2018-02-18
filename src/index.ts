@@ -12,8 +12,8 @@ import * as config from 'config';
 import Environment from './environment/Environment';
 import { IServiceConfig, SERVICE } from './config/index';
 import { getLogger } from './utils/logger';
-import { HealthController } from './routes';
-import CacheController from './routes/CacheController';
+import { HealthController, CacheController } from './routes';
+import SwaggerDocs from './routes/SwaggerDocs';
 
 /**
  * We declare an async function here to make our entrypoint capable to use await
@@ -53,6 +53,7 @@ async function runApp() {
 
     _log.info('Mapping Routes to the server pipeline');
     // Add service routes here
+    new SwaggerDocs().map(app);
     new HealthController().map(app);
     new CacheController().map(app);
 

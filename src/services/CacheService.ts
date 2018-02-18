@@ -2,7 +2,7 @@ import * as mongo from 'mongodb';
 import * as config from 'config';
 import { MONGODB, IMongoConfig } from '../config';
 import { getDb } from '../utils/mongo';
-import { CacheEntry } from '../data';
+import { CacheEntry } from '../model';
 import { now, getTtl } from '../utils/date';
 import { getLogger } from '../utils/logger';
 import * as winston from 'winston';
