@@ -1,6 +1,4 @@
-# fcld-challenge
-
-Code Challenge for Fashion Cloud
+# Service Boilerplate
 
 ## Run Tests
 
